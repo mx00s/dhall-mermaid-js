@@ -1,0 +1,2 @@
+{ SequenceDiagram = ./SequenceDiagram/package.dhall
+}
