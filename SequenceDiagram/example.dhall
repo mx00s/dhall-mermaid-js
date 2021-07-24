@@ -1,46 +1,45 @@
-let Actor = Text
+let Statement = ./Statement.dhall
 
-let Arrow
-    : Type
-    = { line : < Solid | Dotted >
-      , arrowhead : < None | Filled | Unfilled | Cross >
-      }
+let Labeled = ./Labeled.dhall
 
-let Message
-    : Type
-    = { from : Actor, arrow : Arrow, to : Actor, memo : Text }
+let Actor = ./Actor.dhall
 
-let Activation
-    : Type
-    = { for : Actor, status : < Activate | Deactivate > }
-
-let Note
-    : Type
-    = { position : < RightOf | LeftOf | Over >
-      , relativeTo : { first : Actor, second : Optional Actor }
-      , content : Text
-      }
-
-let Statement
-    : Type
-    = < Message : Message | Activation : Activation | Note : Note >
-
-let Labeled
-    : Type -> Type
-    = \(type : Type) -> { label : Text, body : type }
-
-in
-
-\(SequenceDiagram : Type) ->
-\  ( sequenceDiagram
-        : { statements : List Statement -> SequenceDiagram
+in  \(SequenceDiagram : Type) ->
+    \ ( sequenceDiagram
+      : { statement : Statement -> SequenceDiagram
         , loop : Labeled SequenceDiagram -> SequenceDiagram
         , alt :
             Labeled SequenceDiagram ->
             Labeled SequenceDiagram ->
-                SequenceDiagram
+              SequenceDiagram
         , opt : Labeled SequenceDiagram -> SequenceDiagram
         , par : List (Labeled SequenceDiagram) -> SequenceDiagram
+        , sequence : List SequenceDiagram -> SequenceDiagram
         }
-        ) ->
-sequenceDiagram.statements ([] : List Statement)
+      ) ->
+      sequenceDiagram.sequence
+        [ sequenceDiagram.par
+            [ { label = "first"
+              , body =
+                  sequenceDiagram.statement
+                    ( Statement.Note
+                        { position = < RightOf | LeftOf | Over >.RightOf
+                        , relativeTo =
+                          { first = "Alice", second = None Actor }
+                        , content = "This is a test"
+                        }
+                    )
+              }
+            , { label = "second"
+              , body =
+                  sequenceDiagram.statement
+                    ( Statement.Note
+                        { position = < RightOf | LeftOf | Over >.RightOf
+                        , relativeTo =
+                          { first = "Alice", second = Some "Bob" }
+                        , content = "This is another test"
+                        }
+                    )
+              }
+            ]
+        ]
