@@ -1,5 +1,3 @@
-let List/map = (../Prelude).List.map
-
 let Statement = ./Statement.dhall
 
 let Labeled = ./Labeled.dhall
@@ -11,10 +9,7 @@ let SequenceDiagram/statement
       \ ( sequenceDiagram
         : { statement : Statement -> SequenceDiagram
           , loop : Labeled SequenceDiagram -> SequenceDiagram
-          , alt :
-              Labeled SequenceDiagram ->
-              Labeled SequenceDiagram ->
-                SequenceDiagram
+          , alt : List (Labeled SequenceDiagram) -> SequenceDiagram
           , opt : Labeled SequenceDiagram -> SequenceDiagram
           , par : List (Labeled SequenceDiagram) -> SequenceDiagram
           , sequence : List SequenceDiagram -> SequenceDiagram

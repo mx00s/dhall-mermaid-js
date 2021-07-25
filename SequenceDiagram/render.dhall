@@ -96,14 +96,41 @@ let render
                         ${x.body}
                       end''
                 , alt =
-                    \(first : { body : Text, label : Text }) ->
-                    \(second : { body : Text, label : Text }) ->
-                      ''
-                      alt ${first.label}
-                        ${first.body}
-                      else ${second.label}
-                        ${second.body}
-                      end''
+                    \(xs : List { body : Text, label : Text }) ->
+                      -- TODO: factor out reuse here and in `par`
+                      let cmds =
+                            List/concat
+                              Text
+                              [ [ "alt" ]
+                              , List/replicate
+                                  (List/length { body : Text, label : Text } xs)
+                                  Text
+                                  "else"
+                              ]
+
+                      let entries =
+                            List/zip Text cmds { body : Text, label : Text } xs
+
+                      let renderEntry =
+                            \ ( entry
+                              : { _1 : Text
+                                , _2 : { body : Text, label : Text }
+                                }
+                              ) ->
+                              ''
+                              ${entry._1} ${entry._2.label}
+                                ${entry._2.body}''
+
+                      in      Text/concatMapSep
+                                "\n"
+                                { _1 : Text
+                                , _2 : { body : Text, label : Text }
+                                }
+                                renderEntry
+                                entries
+                          ++  ''
+
+                              end''
                 , opt =
                     \(x : { body : Text, label : Text }) ->
                       ''
