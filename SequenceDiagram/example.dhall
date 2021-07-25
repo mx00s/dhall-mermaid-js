@@ -1,6 +1,3 @@
--- let Statement = ./Statement.dhall
--- let Actor = ./Actor.dhall
-
 let SD = ./package.dhall
 
 in  SD.fromList
@@ -11,7 +8,7 @@ in  SD.fromList
                       ( SD.Statement.Note
                           { position = < RightOf | LeftOf | Over >.RightOf
                           , relativeTo =
-                            { first = "Alice", second = None Actor }
+                            { first = "Alice", second = None SD.Actor }
                           , content = "This is a test"
                           }
                       )
