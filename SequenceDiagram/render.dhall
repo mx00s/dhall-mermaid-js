@@ -83,8 +83,9 @@ let renderStatement =
           statement
 
 let render
-    : SequenceDiagram -> Text
+    : SequenceDiagram -> List Actor -> Text
     = \(diagram : SequenceDiagram) ->
+      \(participants : List Actor) ->
         let body =
               diagram
                 Text
@@ -97,7 +98,6 @@ let render
                       end''
                 , alt =
                     \(xs : List { body : Text, label : Text }) ->
-                      -- TODO: factor out reuse here and in `par`
                       let cmds =
                             List/concat
                               Text
@@ -177,8 +177,16 @@ let render
                       Text/concatMapSep "\n" Text (\(x : Text) -> x) xs
                 }
 
+        let participantSection =
+              Text/concatMapSep
+                "\n"
+                Text
+                (\(x : Text) -> "participant " ++ x)
+                participants
+
         in  ''
             sequenceDiagram
+            ${participantSection}
             ${body}''
 
 in  render
